@@ -53,7 +53,7 @@ class Artist(db.Model):
     # seeking_venue= db.Column(db.Boolean)
     # website = db.Column(db.String(500))
     # seeking_description = db.Column(db.String(500))
-    productions = relationship('Production', backref='artist', lazy='joined', cascade="all, delete")
+    productions = db.relationship('Production', backref='artist', lazy='joined', cascade="all, delete")
 
 class Production(db.Model):
   __tablename__ = 'productions'
