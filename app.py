@@ -20,7 +20,7 @@ def create_app(test_config=None):
   @app.route('/')
   def get_greeting():
     excited = os.environ['EXCITED']
-    return render_template('frontend/index.html')
+    return render_template('index.html')
 
   return app
 
