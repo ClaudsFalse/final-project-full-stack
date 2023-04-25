@@ -14,7 +14,8 @@ def create_app(test_config=None):
   # create and configure the app
   app = Flask(__name__)
   setup_db(app)
-  CORS(app)
+  CORS(app, resources={r"/*": {"origins": "*"}})
+
 
   @app.route('/')
   def get_greeting():
