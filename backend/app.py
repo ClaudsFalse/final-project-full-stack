@@ -1,5 +1,11 @@
 import os
-from flask import Flask, request, abort, jsonify
+from flask import (
+    Flask, 
+    render_template, 
+    request, 
+    flash, 
+    redirect, 
+    url_for)
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from models import setup_db
@@ -13,10 +19,7 @@ def create_app(test_config=None):
   @app.route('/')
   def get_greeting():
     excited = os.environ['EXCITED']
-    greeting = "Helllo"
-    if excited == 'true':
-      greeting = greeting + "yolo"
-    return greeting
+    return render_template('frontend/index.html')
 
   return app
 
