@@ -26,7 +26,7 @@ def create_app(test_config=None):
   def get_main():
     LOGIN_URL = create_login_url()
     print("THIS IS THE LOGIN URL", LOGIN_URL)
-    return render_template('index.html', data = LOGIN_URL)
+    return render_template('index.html', LOGIN_URL = LOGIN_URL)
   
   # @app.route('/drinks-detail', methods=['GET'])
   # @requires_auth('get:drinks-detail')
