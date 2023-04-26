@@ -1,11 +1,17 @@
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--  Load CSS in Flask with html-->
+    <link rel="stylesheet" href='/static/main.css' />
+</head>
+<body>
     <div class="main-page">
         <div class="navbar">
-            <ul>
+            <ul class="ul-navbar">
                 <li>Home</li>
                 <li>Productions</li>
                 <li>About Us</li>
-                <li><a href="{{LOGIN_URL}}"></a>Login</li>
+                <li><a href="{{LOGIN_URL}}">Login</a></li>
             </ul>
         </div>
 
@@ -13,9 +19,6 @@
             <div class="artist-login">
 
                 <button id="artist-login">Artist Login</button>
-                <p>
-                    {{LOGIN_URL}}
-                </p>
 
             </div>
             <div class="venue-login">
@@ -24,4 +27,5 @@
 
         </div>
     </div>
-    {% endblock %}
+</body>
+</html>
