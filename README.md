@@ -30,6 +30,7 @@ Roles will include at least:
     - artist: crud on artist
     - venue manager: crud on venues 
 
+
 ## Tests
 Tests will include at least:
 - One test for success behavior of each endpoint

@@ -3,6 +3,7 @@ from flask import (
     Flask, 
     render_template, 
     request, 
+    session,
     flash, 
     redirect, 
     url_for)
@@ -25,7 +26,7 @@ def create_app(test_config=None):
   @app.route('/')
   def get_main():
     LOGIN_URL = create_login_url()
-    print("THIS IS THE LOGIN URL", LOGIN_URL)
+    # session = session.get("user")
     return render_template('index.html', LOGIN_URL = LOGIN_URL)
   
   # @app.route('/drinks-detail', methods=['GET'])
@@ -33,6 +34,14 @@ def create_app(test_config=None):
   @app.route('/productions')
   def get_productions():
     return render_template('productions.html')
+  
+  @app.route('/venues')
+  def get_venues():
+    return render_template('venues.html')
+  
+  @app.route('/artists')
+  def get_artists():
+    return render_template('artists.html')
   
   @app.route("/login")
   def login():
@@ -45,4 +54,4 @@ def create_app(test_config=None):
 app = create_app()
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
