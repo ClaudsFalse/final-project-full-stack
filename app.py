@@ -20,12 +20,13 @@ def create_app(test_config=None):
   CORS(app, resources={r"/*": {"origins": "*"}})
 
   oauth = OAuth(app)
-  LOGIN_URL = create_login_url()
-  print("THIS IS THE LOGIN URL", LOGIN_URL)
+  
 
   @app.route('/')
-  def get_greeting():
-     return render_template('index.html', data = LOGIN_URL)
+  def get_main():
+    LOGIN_URL = create_login_url()
+    print("THIS IS THE LOGIN URL", LOGIN_URL)
+    return render_template('index.html', data = LOGIN_URL)
   
   # @app.route('/drinks-detail', methods=['GET'])
   # @requires_auth('get:drinks-detail')
