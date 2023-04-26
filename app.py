@@ -21,6 +21,7 @@ def create_app(test_config=None):
 
   oauth = OAuth(app)
   LOGIN_URL = create_login_url()
+  print("THIS IS THE LOGIN URL", LOGIN_URL)
 
   @app.route('/')
   def get_greeting():
