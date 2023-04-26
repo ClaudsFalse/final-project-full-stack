@@ -11,7 +11,7 @@ from flask_cors import CORS
 from backend.models import setup_db
 from authlib.integrations.flask_client import OAuth
 from backend.auth.auth import AuthError, requires_auth
-from utils.utils import *
+from backend.utils import *
 
 def create_app(test_config=None):
   # create and configure the app
