@@ -8,6 +8,17 @@
     <title>Artists</title>
 </head>
 <body>
+    {% extends "layout.html" %}
+    {% block content %}
+  
+    <h1>ALL  DJs</h1>
+    <ul>
+    {% for artist in artists %}
+    <li> {{artist.name}} </li>
+    <li>{{artist.email}}</li>
+    {% endfor %}
+    </ul>
+    {% endblock %}
     
 </body>
 </html>
