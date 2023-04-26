@@ -26,8 +26,8 @@ def create_app(test_config=None):
   def get_greeting():
      return render_template('index.html', data = LOGIN_URL)
   
-  @app.route('/drinks-detail', methods=['GET'])
-  @requires_auth('get:drinks-detail')
+  # @app.route('/drinks-detail', methods=['GET'])
+  # @requires_auth('get:drinks-detail')
   
   @app.route("/login")
   def login():
