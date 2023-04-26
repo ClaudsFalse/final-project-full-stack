@@ -30,6 +30,9 @@ def create_app(test_config=None):
   
   # @app.route('/drinks-detail', methods=['GET'])
   # @requires_auth('get:drinks-detail')
+  @app.route('/productions')
+  def get_productions():
+    return render_template('productions.html')
   
   @app.route("/login")
   def login():
