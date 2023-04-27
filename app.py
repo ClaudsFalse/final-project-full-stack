@@ -1,74 +1,71 @@
-import os
+"""Python Flask WebApp Auth0 integration example
+"""
 import json
-from flask import (
-    Flask, 
-    abort,
-    render_template, 
-    session,
-    flash, 
-    redirect, 
-    url_for)
-from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS
-from flask_migrate import Migrate
-from backend.models import setup_db, Artist, Venue, db, db_drop_and_create_all
-from authlib.integrations.flask_client import OAuth
-from backend.auth.auth import AuthError, requires_auth
-from backend.utils import *
+from os import environ as env
 from urllib.parse import quote_plus, urlencode
+from backend.models import Artist, Venue, Gig, setup_db, db_drop_and_create_all, db
+from authlib.integrations.flask_client import OAuth
+from dotenv import find_dotenv, load_dotenv
+from flask import Flask, redirect, render_template, session, url_for, abort, jsonify, request
+from backend.auth.auth import AuthError, requires_auth, verify_decode_jwt
+from backend.utils import is_manager
+from flask_migrate import Migrate
 
-def create_app(test_config=None):
-  # create and configure the app
-  app = Flask(__name__)
-  setup_db(app)
-  migrate = Migrate(app, db)
-  db_drop_and_create_all()
+ENV_FILE = find_dotenv()
+if ENV_FILE:
+    load_dotenv(ENV_FILE)
 
-  # ROUTES
-  app.app_context().push()
-  CORS(app, resources={r"/*": {"origins": "*"}})
-  app.secret_key = env.get("APP_SECRET_KEY")
+app = Flask(__name__)
+app.secret_key = env.get("APP_SECRET_KEY")
 
-  oauth = OAuth(app)
+setup_db(app)
+#migrate = Migrate(app, db) 
+#db_drop_and_create_all()
 
-  oauth.register(
+oauth = OAuth(app)
+
+oauth.register(
     "auth0",
     client_id=env.get("AUTH0_CLIENT_ID"),
     client_secret=env.get("AUTH0_CLIENT_SECRET"),
     client_kwargs={
         "scope": "openid profile email",
     },
-    server_metadata_url=f'https://{env.get("AUTH0_DOMAIN")}/.well-known/openid-configuration'
+    server_metadata_url=f'https://{env.get("AUTH0_DOMAIN")}/.well-known/openid-configuration',
+)
+
+# Controllers API
+@app.route("/")
+def home():
+    return render_template(
+        "index.html",
+        session=session.get("user"),
+        pretty=json.dumps(session.get("user"), indent=4),
     )
 
 
-  @app.route("/")
-  def home():
-    data=session.get('user')
-
-    return render_template("index.html", 
-                           session=data,
-                           pretty=json.dumps(session.get('user'),
-                                             indent=4))
-
-  
-  @app.route("/login")
-  def login():
-    return oauth.auth0.authorize_redirect(
-        redirect_uri=url_for("callback", _external=True)
-    )
-  
-  @app.route("/callback", methods=["GET", "POST"])
-  def callback():
+@app.route("/callback", methods=["GET", "POST"])
+def callback():
     token = oauth.auth0.authorize_access_token()
+    print(token['access_token'])
     session["user"] = token
     return redirect("/")
-  
-  @app.route("/logout")
-  def logout():
+
+
+@app.route("/login")
+def login():
+  return oauth.auth0.authorize_redirect(
+      redirect_uri=url_for("callback", _external=True),
+      audience=env.get('API_AUDIENCE')
+  )
+
+
+@app.route("/logout")
+def logout():
     session.clear()
     return redirect(
-        "https://" + env.get("AUTH0_DOMAIN")
+        "https://"
+        + env.get("AUTH0_DOMAIN")
         + "/v2/logout?"
         + urlencode(
             {
@@ -78,44 +75,94 @@ def create_app(test_config=None):
             quote_via=quote_plus,
         )
     )
-  
-  @app.route("/account")
-  def get_user_account():
-    data=session.get('user')
-    if session:
-      email = data['userinfo']['email']
-      artist = Artist.query.filter(Artist.email == email).one_or_none()
-      if artist:
-        return render_template('view_artist_account.html', name=artist.name)
-      else:
-        return render_template('create_account.html')
+
+@app.route("/account")
+def get_user_account():
+  data=session.get('user')
+  if session:
+    email = data['userinfo']['email']
+    artist = Artist.query.filter(Artist.email == email).one_or_none()
+    if artist:
+      return render_template('view_artist_account.html', name=artist.name)
+    else:
+      return render_template('create_account.html')
    
 
-  @app.route('/productions')
-  def get_productions():
-    return render_template('productions.html')
+@app.route('/productions')
+def get_productions():
+  return render_template('productions.html')
   
-  @app.route('/venues')
-  def get_venues():
-    try:
-      venue_query = Venue.query.all()
-      venues = [venue for venue in venue_query]
-    except:
-      abort(404)
-    return render_template('venues.html', venues=venues)
+@app.route('/venues')
+def get_venues():
+  try:
+    venue_query = Venue.query.all()
+    venues = [venue for venue in venue_query]
+  except:
+     abort(404)
+  return render_template('venues.html', venues=venues)
   
-  @app.route('/artists')
-  def get_artists():
-    try:
-      artist_query = Artist.query.all()
-      artists = [artist for artist in artist_query]
-    except:
-      abort(404)
-    return render_template('artists.html', artists=artists)
-  
-  return app
+@app.route('/artists') 
+def get_artists():
+  try:
+    artist_query = Artist.query.all()
+    artists = [artist for artist in artist_query]
+  except:
+    abort(404)
+  return render_template('artists.html', artists=artists)
 
-app = create_app()
+@app.route('/gigs')
+def get_gigs():
+   print("get gigs")
+   token=session['user']['access_token']
+   gig_query= Gig.query.all()
+   gigs = [gig for gig in gig_query]
+   print("this is gigs", gigs)
+   
+   return render_template('gigs.html', is_manager=is_manager(token=token), gigs=gigs)
 
-if __name__ == '__main__':
+@app.route('/gigs', methods=['POST'])
+@requires_auth('post:gigs')
+def post_gig(payload):
+  return jsonify({
+            'success': True, 
+    })
+
+@app.route('/gigs/create', methods=['GET', 'POST'])
+def create_gigs():
+  if request.method == 'POST':
+        data = {
+        'place': request.form.get('place'),
+        'start_time': request.form.get('time'),
+        'hourly_rate': request.form.get('hourly-rate'),
+        'duration': request.form.get('duration')
+        }
+
+        print(data)
+
+        #get the venue id
+        try:
+          venue_query = Venue.query.filter(Venue.name == data['place']).one_or_none()
+          print(venue_query.name)
+          print(venue_query.id)
+
+          newGig = Gig(
+             venue_id = venue_query.id,
+             artist_id = None,
+             time = request.form.get('time'),
+             hourly_rate = request.form.get('hourly-rate'),
+             duration = request.form.get('duration'),
+             is_booked = False
+          )
+
+          db.session.add(newGig)
+          db.session.commit()
+         
+        except ValueError as e:
+           print(e)
+        return redirect('/gigs')
+  else:
+    return render_template('new_gig.html')
+
+
+if __name__ == "__main__":
     app.run(debug=True)

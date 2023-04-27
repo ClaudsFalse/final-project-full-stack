@@ -3,6 +3,7 @@ from flask import request, _request_ctx_stack
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
+from os import environ as env
 
 
 ## AuthError Exception
@@ -52,10 +53,10 @@ def check_permissions(permission, payload):
     '''
     This method checks the token for the required permissions. 
     '''
-
     # check if the user has a role attached (permission is in the payload)
     if payload.get('permissions'):
         user_permissions = payload.get('permissions')
+        
         # check if the user has the right permissions for this request
         if permission not in user_permissions:
             raise AuthError({
@@ -83,7 +84,8 @@ def verify_decode_jwt(token):
     it should validate the claims
     return the decoded payload
     '''
-    jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
+    jsonurl = urlopen(f'https://{env["AUTH0_DOMAIN"]}/.well-known/jwks.json')
+
     jwks = json.loads(jsonurl.read())
     unverified_header = jwt.get_unverified_header(token)
     rsa_key = {}
@@ -106,12 +108,14 @@ def verify_decode_jwt(token):
             }
     if rsa_key:
         try:
+
+
             payload = jwt.decode(token,
                                  rsa_key,
-                                 algorithms=ALGORITHMS,
-                                 audience=API_AUDIENCE,
-                                 issuer='https://' + AUTH0_DOMAIN + '/')
-
+                                 algorithms=env['ALGORITHMS'],
+                                 audience=env['API_AUDIENCE'],
+                                 issuer='https://' + env['AUTH0_DOMAIN'] + '/')
+            
             return payload
 
         except jwt.ExpiredSignatureError:
@@ -168,3 +172,7 @@ def requires_auth(permission=''):
         return wrapper
     return requires_auth_decorator
 
+def is_manager():
+    token = get_token_auth_header()
+    payload = verify_decode_jwt(token)
+    check_permissions(permission, payload)

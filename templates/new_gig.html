@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href='/static/new_gig.css' />
+    <title>Post a new gig</title>
+</head>
+<body>
+    {% extends "layout.html" %}
+    {% block content %}
+    <form method="POST" id="new-gig-form">
+        <label for="place">Place:</label>
+        <input type="text" id="place" name="place" required>
+        
+        <label for="time">Start time:</label>
+        <input type="time" id="start-time" name="time" required>
+        
+        <label for="hourly-rate">Hourly Rate:</label>
+        <div class="currency-input">
+          <span class="currency-symbol">£</span>
+          <input type="number" id="hourly-rate" name="hourly-rate" min="0" step="0.01" required>
+        </div>
+        
+        <label for="duration">Duration (hours):</label>
+        <input type="number" id="duration" name="duration" min="0" step="0.5" required>
+        
+        <input type="submit" value="Submit">
+      </form>
+      
+    {% endblock %}
+<!-- <script>
+function createGig() {
+    const place = document.getElementById('place').value;
+    const startTime = document.getElementById('start-time').value;
+    const hourlyRate = document.getElementById('hourly-rate').value;
+    const duration = document.getElementById('duration').value;
+    const data = {
+        place: place,
+        start_time: startTime,
+        hourly_rate: hourlyRate,
+        duration: duration
+    };
+    fetch('/gigs/create', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+    document.getElementById('new-gig-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        createGig();
+    });
+
+    </script> -->
+</body>
+</html>

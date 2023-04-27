@@ -8,6 +8,7 @@ if ENV_FILE:
     load_dotenv(ENV_FILE)
 
 database_path = env['DATABASE_URL']
+
 if database_path.startswith("postgres://"):
   database_path = database_path.replace("postgres://", "postgresql://", 1)
 
@@ -18,9 +19,9 @@ def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
-    db.create_all()
 
 def db_drop_and_create_all():
+    
     db.drop_all()
     db.create_all()
     # add one demo row which is helping in POSTMAN test
@@ -35,11 +36,14 @@ def db_drop_and_create_all():
                      phone="01415721448",
                      image_link="https://shorturl.at/vL789")
     
-
+    
     items = [newArtist, newVenue]
     for item in items:
-        db.session.add(item)
-        db.session.commit()
+        try:
+            db.session.add(item)
+            db.session.commit()
+        except:
+            print(f"error adding {item} to db")
 
 
 
@@ -69,8 +73,13 @@ class Artist(db.Model):
     gigs = db.relationship('Gig', backref='artist', lazy='joined', cascade="all, delete")
 
 class Gig(db.Model):
-  __tablename__ = 'productions'
+  __tablename__ = 'gigs'
+
   id = Column(db.Integer, primary_key=True)
   # define foreign keys that map to the primary keys in the respective parent tables
   venue_id = Column(db.Integer, db.ForeignKey('venues.id'), nullable=False)
-  artist_id = Column(db.Integer, db.ForeignKey('artists.id'), nullable=False)
+  artist_id = Column(db.Integer, db.ForeignKey('artists.id'), nullable=True)
+  time = Column(db.String(10), nullable=False)
+  hourly_rate = Column(db.Float, nullable=False)
+  duration = Column(db.Float, nullable=False)
+  is_booked = Column(db.Boolean, nullable=False)
