@@ -1,0 +1,103 @@
+/* Set the background color and font */
+body {
+  
+  font-family: Arial, sans-serif;
+}
+
+/* Set the grid container styles */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+  grid-gap: 20px;
+  padding: 20px;
+}
+
+/* Set the card styles */
+.card {
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Set the card image styles */
+.card img {
+  max-height: 200px;
+  object-fit: cover;
+  object-position: center;
+  width: 100%;
+}
+
+/* Set the card content styles */
+.card-content {
+  padding: 20px;
+  text-align: center;
+}
+
+/* Set the hover styles */
+.card:hover {
+  transform: scale(1.02);
+}
+
+/* Set the title styles */
+.card-title {
+  color: #ff9baf;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* Set the description styles */
+.card-description {
+  color: #333;
+  font-size: 16px;
+  line-height: 1.4;
+  margin-bottom: 20px;
+}
+
+/* Set the button styles */
+.card-button {
+  background-color: #ff9baf;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px 20px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Set the button hover styles */
+.card-button:hover {
+  background-color: #ff7f9c;
+}
+
+
+/* Set the post a gig button styles */
+.post-a-gig-button {
+  background-color: #ff7f9c;
+  border: none;
+  display: block;
+  margin: 0 auto;
+  border-radius: 50px;
+  box-shadow: 0 0 10px rgba(255, 127, 156, 0.5);
+  color: #fff;
+  cursor: pointer;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  margin-top: 100px;
+  padding: 15px 50px;
+  text-align: center;
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+/* Set the post a gig button hover styles */
+.post-a-gig-button:hover {
+  box-shadow: 0 0 20px rgba(255, 127, 156, 0.5);
+}

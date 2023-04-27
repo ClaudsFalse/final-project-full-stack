@@ -112,13 +112,35 @@ def get_artists():
 
 @app.route('/gigs')
 def get_gigs():
-   print("get gigs")
-   token=session['user']['access_token']
-   gig_query= Gig.query.all()
-   gigs = [gig for gig in gig_query]
-   print("this is gigs", gigs)
+  token=session['user']['access_token']
+  try:
+    print("try")
+    gig_query= Gig.query.all()
+    print("gig query: ", gig_query)
+  except ValueError as e:
+     print(e)
+  gig_data = []
+  for gig in gig_query:
+    print("venue_id", gig.venue_id)
+    venue = Venue.query.filter(Venue.id==gig.venue_id).one_or_none()
+    gig_data.append(
+       {
+              "venue_id":gig.venue_id,
+              "venue_name":venue.name,
+              "artist_id":gig.artist_id,
+              "venue_image_link":venue.image_link,
+              "start_time": gig.time,
+              "hourly_rate": gig.hourly_rate,
+              "duration":gig.duration,
+              "is_booked":gig.is_booked
+        })
+    print("GIG DATA", gig_data)
+  return render_template('gigs.html', is_manager=is_manager(token=token), gigs=gig_data)
+  
+  
+
    
-   return render_template('gigs.html', is_manager=is_manager(token=token), gigs=gigs)
+   
 
 @app.route('/gigs', methods=['POST'])
 @requires_auth('post:gigs')
