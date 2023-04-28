@@ -5,7 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Navbar</title>
-    <link rel="stylesheet" href='/static/main.css' />
+    <link rel="stylesheet" href='/static/navbar.css' />
+    <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace&display=swap" rel="stylesheet">
 
 </head>
 <body>
@@ -13,19 +14,20 @@
     <div class="navbar">
         <ul class="ul-navbar">
            
-            <li class="li-navbar"><a href="/">Home</a></li>
+          
             <li class="li-navbar"><a href="/gigs">Gigs</a></li>
             <li class="li-navbar"><a href="/venues">Venues</a></li>
             <li class="li-navbar"><a href="/artists">Artists</a></li>
             {% if session %}
-
-            <li class="li-right"><a href="/account">Your Account</a></li>
             <li class="li-right"><a href="/logout">Logout</a></li>
+            <li class="li-right"><a href="/account">Your Account</a></li>
             {% else %}
             <li class="li-right"><a href="/login">Login</a></li>
-            </div>
             {% endif %}
         </ul>
+    </div>
+  
+      
 
     
 </body>

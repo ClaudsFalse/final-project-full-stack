@@ -4,21 +4,41 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href='/static/main.css' />
+    <link rel="stylesheet" href='/static/gigs.css' />
     <title>Artists</title>
 </head>
 <body>
     {% extends "layout.html" %}
     {% block content %}
-  
-    <h1>ALL  DJs</h1>
-    <ul>
-    {% for artist in artists %}
-    <li> {{artist.name}} </li>
-    <li>{{artist.email}}</li>
-    {% endfor %}
-    </ul>
-    {% endblock %}
+       
+        <!-- <h1 style="font-family: 'Bruno Ace', cursive;" >ALL ARTISTS</h1> -->
+        <div class="grid-container">
+           
+            <!-- Generate artist cards from backend data -->
+            {% for artist in artists %}
     
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1528991281749-0092cfc77c6d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTR8fGRqJTIwYXZhdGFyfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=800&q=60" />
+                <div class="card-content">
+                    <h2 style="font-family: 'Bruno Ace', cursive;" class="card-title">{{ artist.name }}</h2>
+                    <p class="card-description">{{artist.email}} | {{artist.phone}} </p>
+                   
+                    <ul style="list-style-type: none;" class="ul-genre">
+                        {%for genre in artist.genres%}
+                        
+                            <li  style="font-family: 'Bruno Ace', cursive;  
+                            display: inline-block;"><span class="pill">{{genre}}</span></li>
+    
+                        {%endfor%}
+                    </ul>
+
+
+    
+                  </div>
+                </div>
+                {% endfor %}
+            </div>
+    
+            {% endblock %}
 </body>
 </html>

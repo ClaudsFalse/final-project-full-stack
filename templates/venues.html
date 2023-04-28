@@ -4,20 +4,38 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href='/static/main.css' />
+    <link rel="stylesheet" href='/static/gigs.css' />
     <title>Venues</title>
 </head>
 <body>
     {% extends "layout.html" %}
     {% block content %}
    
-    <h1>ALL  VENUES</h1>
-    <ul>
+    <h1 style="font-family: 'Bruno Ace', cursive;" >ALL  VENUES</h1>
+    <div class="grid-container">
+       
+        <!-- Generate gig cards from backend data -->
         {% for venue in venues %}
-        <li>{{venue.name}}</li> 
-        {% endfor %}
-        </ul>
+
+        <div class="card">
+            <img src="{{venue.image_link}}" />
+            <div class="card-content">
+                <h2 style="font-family: 'Bruno Ace', cursive;" class="card-title">{{ venue.name }}</h2>
+                <p class="card-description">{{venue.address}}</p>
+                <button class="card-button" disabled>View available gigs</button>
+                {%if is_manager%}
+                <button class="card-button">Delete Venue</button>
+                {%endif%}
+
+              </div>
+            </div>
+            {% endfor %}
+        </div>
+
+
         {% endblock %}
+    
+
     
 </body>
 </html>

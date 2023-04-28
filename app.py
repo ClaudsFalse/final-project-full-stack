@@ -37,19 +37,19 @@ oauth.register(
 # Controllers API
 @app.route("/")
 def home():
+   if not session:
     return render_template(
-        "index.html",
-        session=session.get("user"),
-        pretty=json.dumps(session.get("user"), indent=4),
-    )
+        "index.html",session=session.get("user"))
+   else:
+       return redirect("/gigs")
 
 
 @app.route("/callback", methods=["GET", "POST"])
 def callback():
     token = oauth.auth0.authorize_access_token()
-    print(token['access_token'])
+    
     session["user"] = token
-    return redirect("/")
+    return redirect("/gigs")
 
 
 @app.route("/login")
@@ -94,12 +94,14 @@ def get_productions():
   
 @app.route('/venues')
 def get_venues():
+  token=session['user']['access_token']
   try:
     venue_query = Venue.query.all()
     venues = [venue for venue in venue_query]
+    
   except:
      abort(404)
-  return render_template('venues.html', venues=venues)
+  return render_template('venues.html', venues=venues, is_manager=is_manager(token=token))
   
 @app.route('/artists') 
 def get_artists():
@@ -114,40 +116,45 @@ def get_artists():
 def get_gigs():
   token=session['user']['access_token']
   try:
-    print("try")
     gig_query= Gig.query.all()
-    print("gig query: ", gig_query)
   except ValueError as e:
      print(e)
   gig_data = []
   for gig in gig_query:
-    print("venue_id", gig.venue_id)
     venue = Venue.query.filter(Venue.id==gig.venue_id).one_or_none()
     gig_data.append(
-       {
+       
+       {      "gig_id": gig.id,
               "venue_id":gig.venue_id,
               "venue_name":venue.name,
               "artist_id":gig.artist_id,
               "venue_image_link":venue.image_link,
               "start_time": gig.time,
-              "hourly_rate": gig.hourly_rate,
+              "hourly_rate": round(gig.hourly_rate),
               "duration":gig.duration,
               "is_booked":gig.is_booked
         })
-    print("GIG DATA", gig_data)
   return render_template('gigs.html', is_manager=is_manager(token=token), gigs=gig_data)
-  
-  
-
-   
-   
 
 @app.route('/gigs', methods=['POST'])
 @requires_auth('post:gigs')
 def post_gig(payload):
-  return jsonify({
+    return jsonify({
             'success': True, 
     })
+
+@app.route('/gigs/delete', methods=['POST'])
+@requires_auth('delete:gigs')
+def delete_gigs(payload):
+  gig_id = request.json.get('id')
+
+  try:
+     gig = Gig.query.get_or_404(gig_id)
+     db.session.delete(gig)
+     db.session.commit()
+  except ValueError as e:
+     print(e)
+  return jsonify({'message': 'Gig deleted'})
 
 @app.route('/gigs/create', methods=['GET', 'POST'])
 def create_gigs():
@@ -164,8 +171,6 @@ def create_gigs():
         #get the venue id
         try:
           venue_query = Venue.query.filter(Venue.name == data['place']).one_or_none()
-          print(venue_query.name)
-          print(venue_query.id)
 
           newGig = Gig(
              venue_id = venue_query.id,

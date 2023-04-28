@@ -3,14 +3,79 @@
 <head>
 <!--  Load CSS in Flask with html-->
     <link rel="stylesheet" href='/static/main.css' />
+    <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace&display=swap" rel="stylesheet">
+    <style>
+        body {
+			background-color: #f3e9f9;
+			margin: 0;
+			padding: 0;
+            font-family: 'Bruno Ace', cursive;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			height: 100vh;
+            background-image: url("static/discoBall.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            backdrop-filter: blur(30px);
+		}
+
+        .container {
+            backdrop-filter: blur(50px);
+            background-color: rgba(218, 117, 235, 0.6);
+            margin-top: 5%;
+            border-radius: 3rem;
+            margin-bottom: 2rem;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+
+		h1 {
+			font-size: 4rem;
+			color: #f0b2c1;
+			margin-bottom: 2rem;
+		}
+
+		.btn-login {
+			background-color: #6ec3d4;
+			color: #fff;
+			font-size: 1.5rem;
+            font-family: 'Bruno Ace', cursive;
+			font-weight: bold;
+			padding: 1rem 2rem;
+			border: none;
+			border-radius: 2rem;
+			cursor: pointer;
+			box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+			transition: transform 0.3s ease-in-out;
+		}
+
+		.btn-login:hover {
+			transform: scale(1.1);
+		}
+
+   
+
+
+
+    </style>
+    
+      
 </head>
 <body>
-    {% extends "layout.html" %}
-    {% block content %}
-    <h1>This is the homepage!</h1>
-    <p>{{pretty}}</p>
-    <h1>***************  {{jwt_token}}</h1>
-    {% endblock %}
+   
+    {% if not session %}
+  
+    <div class="container">
+	    <h1 class="title">Welcome to GROOVY</h1>
+    </div>
+	<a class="btn-login" href="/login">Login</a>
+        {% endif %}
 
+      
+    
+  
 </body>
 </html>

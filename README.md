@@ -7,15 +7,17 @@ Models will include at least:
 - Two classes with primary keys at at least two attributes each ✅
     - Artists {id, name, genres[],productions[at a certain venue], rate} 
     - Venues {id, name, genres[], productions[at a certain venue], rate} 
+    - gigs 
 - [Optional but encouraged] One-to-many or many-to-many relationships between classes ✅
 
 ## Endpoints
 Endpoints will include at least:
-- Two GET requests ✅
+- Two GET requests:
     - GET artists 
     - GET venues
+    - GET gigs ✅
 - One POST request ✅
-    - add artist 
+    - post gig ✅
 - One PATCH request ✅
     - edit artist
 - One DELETE request ✅

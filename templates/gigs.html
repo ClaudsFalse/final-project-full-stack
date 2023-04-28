@@ -13,57 +13,90 @@
     {% extends "layout.html" %}
     {% block content %}
 
-    {%if not gigs %}
-        There are no gigs to book
-    {%else%}
-    <div class="main_page">
-        {% if is_manager %}
-        <button class="post-a-gig-button" id="post-gig-btn" data-token="{{session['user']['access_token']}}">Post a new gig</button>
-        {% else %}
     
+    <div class="main_page">
+ 
+        {% if is_manager %}
+        <button class="post-a-gig-button" id="post-gig-btn" >Post a new gig</button>
         {% endif %}
     </div>
     <div class="grid-container">
        
         <!-- Generate gig cards from backend data -->
         {% for gig in gigs %}
-        <div class="card">
+        <div class="card" >
+  
             <img src="{{gig['venue_image_link']}}" />
-            <div class="card-content">
+            <div class="card-content" data-id="{{gig['gig_id']}}">
                 <h2 class="card-title">Gig at {{ gig['venue_name'] }}</h2>
-                <p class="card-description">The description goes here. </p>
+                <p class="card-description"> ⏰ Starts at: {{gig['start_time']}} ({{gig['duration']}} hours) | 💰 Hourly rate: £{{gig['hourly_rate']}} </p>
+                
+                {% if is_manager %}
+                <button class="delete-btn"  class="card-button">Delete Gig</button>
+                <button class="edit-btn"  class="card-button">Edit Gig</button>
+                {%else%}
                 <button class="card-button">Book Now</button>
+                {% endif %}
+
               </div>
             </div>
             {% endfor %}
         </div>
 
-        {%endif%}
-
-
-
+      
+      
     <script>
-    const post_gig_btn = document.getElementById('post-gig-btn');
-    post_gig_btn.onclick = function(e) {
-        const token = e.target.dataset['token'];
-        fetch('/gigs', {
+
+           // Add event listener to all delete buttons
+           const token = "{{ session['user']['access_token']}}";
+           var deleteButtons = document.querySelectorAll('.delete-btn');
+           deleteButtons.forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                console.log("pressed")
+                event.preventDefault();
+                var gigCard = this.parentNode;
+                var cardContainer = gigCard.parentNode;
+                var gigId = gigCard.getAttribute('data-id');
+                console.log('Deleting gig with id ' + gigId);
+                deleteGig(gigId);
+                cardContainer.remove();
+            });
+        });
+        // Delete gig using AJAX
+        function deleteGig(gigId) {
+            
+            fetch('/gigs/delete', {
                 method: 'POST',
                 headers: {
-                    'Content-Type':'application/json',
-                    'Authorization': 'Bearer ' + token
-                }})
-                  .then(function() {
-                    window.location.href = '/gigs/create';
-                  })
-                  .catch(function(e){
-                    console.log('error', e)
-           
-                  })
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({id: gigId})
+            })
+            .then(response => response.json())
+            .catch(error => console.error(error));
         }
+        
+    const post_gig_btn = document.getElementById('post-gig-btn');
+   
+    post_gig_btn.onclick = function(e) {
+      
+        fetch('/gigs', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type':'application/json',
+                        'Authorization': 'Bearer ' + token
+                    }})
+                        .then(function() {
+                        window.location.href = '/gigs/create';
+                    })
+                        .catch(function(e){
+                        console.log('error', e)})
+                    };
 
     </script>
-        {% endblock %}
-    
+  
+  {% endblock %}
 </body>
 
 </html>
