@@ -52,7 +52,6 @@
            var deleteButtons = document.querySelectorAll('.delete-btn');
            deleteButtons.forEach(function(button) {
             button.addEventListener('click', function(event) {
-                console.log("pressed")
                 event.preventDefault();
                 var gigCard = this.parentNode;
                 var cardContainer = gigCard.parentNode;
@@ -62,8 +61,35 @@
                 cardContainer.remove();
             });
         });
+        var editButtons = document.querySelectorAll('.edit-btn');
+        editButtons.forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                var gigCard = this.parentNode;
+                var cardContainer = gigCard.parentNode;
+                var gigId = gigCard.getAttribute('data-id');
+                console.log('Editing gig with id ' + gigId);
+                editGig(gigId);
+            });
+        });
+
+    function editGig(gigId){
+        fetch('/gigs/'+gigId +'/edit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type':'application/json',
+                        'Authorization': 'Bearer ' + token
+                    }})
+                        .then(function() {
+                        window.location.href = '/gigs/'+gigId+'/edit';
+                    })
+                        .catch(function(e){
+                        console.log('error', e)})
+                    };
+        
+
         // Delete gig using AJAX
-        function deleteGig(gigId) {
+    function deleteGig(gigId) {
             
             fetch('/gigs/delete', {
                 method: 'POST',
@@ -75,7 +101,8 @@
             })
             .then(response => response.json())
             .catch(error => console.error(error));
-        }
+        };
+
         
     const post_gig_btn = document.getElementById('post-gig-btn');
    

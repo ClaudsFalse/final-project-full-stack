@@ -1,4 +1,5 @@
 from backend.auth.auth import AuthError, requires_auth, verify_decode_jwt
+from jose import jwt
 
 def is_manager(token):
     decoded = verify_decode_jwt(token)
@@ -8,3 +9,11 @@ def is_manager(token):
         return True 
     else:
         return False
+    
+def is_token_expired(token):
+    try:
+        decoded = verify_decode_jwt(token)
+        return False
+    except jwt.ExpiredSignatureError:
+        print("Your token has expired")
+        return True

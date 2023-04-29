@@ -6,10 +6,11 @@ from urllib.parse import quote_plus, urlencode
 from backend.models import Artist, Venue, Gig, setup_db, db_drop_and_create_all, db
 from authlib.integrations.flask_client import OAuth
 from dotenv import find_dotenv, load_dotenv
-from flask import Flask, redirect, render_template, session, url_for, abort, jsonify, request
+from flask import Flask, redirect, render_template, session, url_for, abort, jsonify, request, flash
 from backend.auth.auth import AuthError, requires_auth, verify_decode_jwt
-from backend.utils import is_manager
+from backend.utils import is_manager, is_token_expired
 from flask_migrate import Migrate
+import sys
 
 ENV_FILE = find_dotenv()
 if ENV_FILE:
@@ -34,20 +35,23 @@ oauth.register(
     server_metadata_url=f'https://{env.get("AUTH0_DOMAIN")}/.well-known/openid-configuration',
 )
 
+    
 # Controllers API
 @app.route("/")
 def home():
    if not session:
     return render_template(
-        "index.html",session=session.get("user"))
+        "index.html")
    else:
+       token=session['user']['access_token']
+       if is_token_expired(token):
+          return redirect('/logout')
        return redirect("/gigs")
 
 
 @app.route("/callback", methods=["GET", "POST"])
 def callback():
     token = oauth.auth0.authorize_access_token()
-    
     session["user"] = token
     return redirect("/gigs")
 
@@ -58,7 +62,6 @@ def login():
       redirect_uri=url_for("callback", _external=True),
       audience=env.get('API_AUDIENCE')
   )
-
 
 @app.route("/logout")
 def logout():
@@ -86,11 +89,6 @@ def get_user_account():
       return render_template('view_artist_account.html', name=artist.name)
     else:
       return render_template('create_account.html')
-   
-
-@app.route('/productions')
-def get_productions():
-  return render_template('productions.html')
   
 @app.route('/venues')
 def get_venues():
@@ -114,7 +112,9 @@ def get_artists():
 
 @app.route('/gigs')
 def get_gigs():
-  token=session['user']['access_token']
+  if session:
+     print("we're here")
+     token=session['user']['access_token']
   try:
     gig_query= Gig.query.all()
   except ValueError as e:
@@ -147,7 +147,6 @@ def post_gig(payload):
 @requires_auth('delete:gigs')
 def delete_gigs(payload):
   gig_id = request.json.get('id')
-
   try:
      gig = Gig.query.get_or_404(gig_id)
      db.session.delete(gig)
@@ -155,6 +154,40 @@ def delete_gigs(payload):
   except ValueError as e:
      print(e)
   return jsonify({'message': 'Gig deleted'})
+
+@app.route('/gigs/<int:gig_id>/edit', methods=['POST', 'GET'])
+def edit_gigs(gig_id):
+   if request.method == 'POST':
+      return jsonify({
+            'success': True
+    })
+   elif request.method == 'PATCH':
+      print("received patch rew")
+      gig = Gig.query.get_or_404(gig_id)
+      data = request.get_json()
+      # update the gig data with the new values
+      gig.start_time = data.get('start_time')
+      gig.hourly_rate = data.get('hourly_rate')
+      gig.duration = data.get('duration')
+      flash('Gig updated successfully!')
+      return redirect(url_for('get_gigs'))
+
+      
+   else:
+      gig = Gig.query.get_or_404(gig_id)
+      venue = Venue.query.get_or_404(gig.venue_id)
+      gig_data = {
+         'id':gig_id,
+         'place': venue.name,
+         'time': gig.time,
+         'hourly_rate': gig.hourly_rate,
+         'duration': gig.duration
+      }
+      return render_template('edit_gig.html', gig_data = gig_data)
+   
+
+
+       
 
 @app.route('/gigs/create', methods=['GET', 'POST'])
 def create_gigs():
@@ -165,8 +198,6 @@ def create_gigs():
         'hourly_rate': request.form.get('hourly-rate'),
         'duration': request.form.get('duration')
         }
-
-        print(data)
 
         #get the venue id
         try:
@@ -183,6 +214,7 @@ def create_gigs():
 
           db.session.add(newGig)
           db.session.commit()
+          db.session.close()
          
         except ValueError as e:
            print(e)
