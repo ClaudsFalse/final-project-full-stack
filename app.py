@@ -113,7 +113,6 @@ def get_artists():
 @app.route('/gigs')
 def get_gigs():
   if session:
-     print("we're here")
      token=session['user']['access_token']
   try:
     gig_query= Gig.query.all()
@@ -155,39 +154,40 @@ def delete_gigs(payload):
      print(e)
   return jsonify({'message': 'Gig deleted'})
 
-@app.route('/gigs/<int:gig_id>/edit', methods=['POST', 'GET'])
-def edit_gigs(gig_id):
-   if request.method == 'POST':
-      return jsonify({
-            'success': True
-    })
-   elif request.method == 'PATCH':
-      print("received patch rew")
-      gig = Gig.query.get_or_404(gig_id)
-      data = request.get_json()
-      # update the gig data with the new values
-      gig.start_time = data.get('start_time')
-      gig.hourly_rate = data.get('hourly_rate')
-      gig.duration = data.get('duration')
-      flash('Gig updated successfully!')
-      return redirect(url_for('get_gigs'))
 
-      
-   else:
-      gig = Gig.query.get_or_404(gig_id)
-      venue = Venue.query.get_or_404(gig.venue_id)
-      gig_data = {
-         'id':gig_id,
-         'place': venue.name,
-         'time': gig.time,
-         'hourly_rate': gig.hourly_rate,
-         'duration': gig.duration
-      }
-      return render_template('edit_gig.html', gig_data = gig_data)
-   
+@app.route('/gigs/<int:gig_id>/edit', methods=['GET', 'POST'])
+def edit_gig(gig_id):
 
+  if request.method == 'GET':
+    gig = Gig.query.get_or_404(gig_id)
+    venue = Venue.query.get_or_404(gig.venue_id)
+    gig_data = {
+     'id':gig_id,
+     'place': venue.name,
+     'start_time':gig.time,
+     'hourly_rate':gig.hourly_rate,
+     'duration':gig.duration
+    }
+    return render_template('edit_gig.html', gig_data=gig_data)
+  
+  if request.method == 'POST':
+    gig = Gig.query.get(gig_id)
+    data = {
+        'place': request.form.get('place'),
+        'start_time': request.form.get('time'),
+        'hourly_rate': request.form.get('hourly-rate'),
+        'duration': request.form.get('duration')
+        }
+    print("*** THIS IS DATA, ", data)
+    gig.start_time = data['start_time']
+    gig.hourly_rate = data['hourly_rate']
+    gig.duration = data['duration']
+    db.session.commit()
+    db.session.close()
+    flash("Gig updated successfully")
+    return redirect('/gigs')
+     
 
-       
 
 @app.route('/gigs/create', methods=['GET', 'POST'])
 def create_gigs():

@@ -43,6 +43,22 @@ form {
     letter-spacing: 2px;
     transition: all 0.3s ease-in-out;
   }
+
+  .update-btn{
+    background-color: #934BAC;
+    color: #FFEBF3;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Arial Black', sans-serif;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.3s ease-in-out;
+  }
+
+  
   
   input[type="submit"]:hover {
     background-color: #FFEBF3;
