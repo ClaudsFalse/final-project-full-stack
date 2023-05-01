@@ -41,3 +41,16 @@ Tests will include at least:
 
 # Project Rubric
 Your project should meet all rubric requirements to pass the project. The link is provided here: [Project Rubric.](https://review.udacity.com/#!/rubrics/5091/view)
+
+
+'''
+How to use 
+There are two roles that can be used to login:
+- Artist login: artist@groove.com - password: Artistlogin2023
+- Venue manager login: venue-manager@groove.com - password: Managerlogin2023
+''''''
+How to use 
+There are two roles that can be used to login:
+- Artist login: artist@groove.com - password: Artistlogin2023
+- Venue manager login: venue-manager@groove.com - password: Managerlogin2023
+'''

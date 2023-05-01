@@ -22,3 +22,4 @@ authlib>=1.0
 requests>=2.27.1
 python-jose>=3.0.0
 auth0-python
+auth
