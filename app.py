@@ -1,5 +1,6 @@
 """Python Flask WebApp Auth0 integration example
 """
+import os
 import json
 from os import environ as env
 from urllib.parse import quote_plus, urlencode
@@ -12,6 +13,9 @@ from backend.utils import is_manager, is_token_expired
 from flask_migrate import Migrate
 import sys
 
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 ENV_FILE = find_dotenv()
 if ENV_FILE:
@@ -42,11 +46,15 @@ def create_app(test_config=None):
   # Controllers API
   @app.route("/")
   def home():
+    print("No active user session detected. Please login")
     if not session:
         return render_template(
             "index.html")
     else:
+        print("User has logged in")
+        print("session: ", session)
         token = session['user']['access_token']
+        print("this is the user access token: ", token)
         if is_token_expired(token):
             return redirect('/logout')
         return redirect("/gigs")

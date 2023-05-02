@@ -49,8 +49,3 @@ There are two roles that can be used to login:
 - Artist login: artist@groove.com - password: Artistlogin2023
 - Venue manager login: venue-manager@groove.com - password: Managerlogin2023
 ''''''
-How to use 
-There are two roles that can be used to login:
-- Artist login: artist@groove.com - password: Artistlogin2023
-- Venue manager login: venue-manager@groove.com - password: Managerlogin2023
-'''
