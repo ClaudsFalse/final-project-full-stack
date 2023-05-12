@@ -6,7 +6,7 @@ import requests
 import datetime
 from os import environ as env
 from dotenv import find_dotenv, load_dotenv
-from models import Artist, Gig, Venue
+from backend.models import Artist, Gig, Venue
 ENV_FILE = find_dotenv()
 if ENV_FILE:
     load_dotenv(ENV_FILE)
