@@ -13,7 +13,6 @@ ENV_FILE = find_dotenv()
 if ENV_FILE:
     load_dotenv(ENV_FILE)
 
-
 def create_app(test_config=None):
   app = Flask(__name__)
   app.secret_key = env.get("APP_SECRET_KEY")
@@ -38,14 +37,11 @@ def create_app(test_config=None):
   # Controllers API
   @app.route("/")
   def home():
-    if not session:
+    if 'user' not in session:
         return render_template(
             "index.html")
     else:
-        print("User has logged in")
-        print("session: ", session)
         token = session['user']['access_token']
-        print("this is the user access token: ", token)
         if is_token_expired(token):
             return redirect('/logout')
         return redirect("/gigs")
@@ -223,8 +219,7 @@ def create_app(test_config=None):
         return render_template('new_gig.html')
   return app
 
-app = create_app()
 
 if __name__ == "__main__":
-    # app = create_app()
+    app = create_app()
     app.run(debug=True)
