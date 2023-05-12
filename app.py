@@ -14,9 +14,6 @@ from flask_migrate import Migrate
 import sys
 
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.dirname(SCRIPT_DIR))
-
 ENV_FILE = find_dotenv()
 if ENV_FILE:
     load_dotenv(ENV_FILE)
@@ -233,5 +230,5 @@ def create_app(test_config=None):
 
 
 if __name__ == "__main__":
-    app = create_app()
-    app.run(debug=True)
+    application = create_app()
+    application.run(debug=True)
