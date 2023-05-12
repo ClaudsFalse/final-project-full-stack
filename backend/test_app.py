@@ -13,7 +13,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from app import create_app
 from backend.models import Artist, Venue, Gig, db, db_drop_and_create_all, setup_db
-from backend.utils import is_manager, is_token_expired, getUserAccessToken, getUserTokenHeaders
+from backend.utils import is_manager, is_token_expired, getUserAccessToken, create_test_gig
 
 
 load_dotenv()
@@ -190,7 +190,6 @@ class GroovyTestCase(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertIn(b'4.5', response.data)
         
-    
     def test_get_gigs_when_logged_in_as_manager_fail(self):
         with self.client as client:
             token = self.login_as_manager(client)
@@ -212,7 +211,6 @@ class GroovyTestCase(unittest.TestCase):
             self.assertIn(b'success', response.data)
             # Decode the response data from bytes to a string
             data = response.data.decode('utf-8')
-    
             # Parse the response data as JSON
             data_dict = json.loads(data)
     
@@ -225,20 +223,121 @@ class GroovyTestCase(unittest.TestCase):
             # Check the response status code and headers
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.content_type, 'application/json')
-            
+
     def test_post_gigs_fail(self):
-        pass
+        with self.client as client:
+            token = self.login_as_manager(client)
+            response = client.post('/gig', headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {token}'
+                })
+        self.assertEqual(response.status_code, 404)
 
     def test_post_gigs_delete_success(self):
-        pass
+        with self.client as client:
+            token = self.login_as_manager(client)
+            newArtist = Artist(name = 'Jordan',
+                   email = 'artist@groove.com',
+                   phone = '07563489658',
+                   genres = ['disco', 'house'])
+            newVenue = Venue(name="Tabac", 
+                     genres=['disco', 'house'],
+                     address="Mitchell Lane",
+                     phone="01415721448",
+                     image_link="https://shorturl.at/vL789")
+            
+            gig = Gig(venue_id = 1,
+                   artist_id = 1,
+                   time = '21:00',
+                   hourly_rate = 5.5,
+                   duration = 4.5,
+                   is_booked = False)
+
+            db.session.add(gig)
+            db.session.add(newVenue)
+            db.session.add(newArtist)
+            db.session.commit()
+            response = client.post('/gigs/delete', headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {token}'
+                },
+                data='{"id": "1"}')
+            
+            data = response.data.decode('utf-8')
+            # Parse the response data as JSON
+            data_dict = json.loads(data)
+            self.assertIn('message', data_dict)
+            self.assertEqual(data_dict['message'], "Gig deleted")
+            self.assertEqual(response.status_code, 200)
 
     def test_post_gigs_delete_fail(self):
-        pass
+         with self.client as client:
+            token = self.login_as_manager(client)
+            response = client.post('/gigs/delete', headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {token}'
+                },
+                data='{"id": "1"}')
+            self.assertEqual(response.status_code, 404)
 
-    def test_edit_gigs_success(self):
-        pass
+    def test_edit_get_gigs_success(self):
+        with self.client as client:
+            token = self.login_as_manager(client)
+            # test that we've successfully logged in as a manager
+            self.assertEqual(is_manager(token), True)
+            with client.session_transaction() as session:
+                session['user'] = {'access_token': token}
+            newArtist = Artist(name = 'Jordan',
+                   email = 'artist@groove.com',
+                   phone = '07563489658',
+                   genres = ['disco', 'house'])
+            newVenue = Venue(name="Tabac", 
+                     genres=['disco', 'house'],
+                     address="Mitchell Lane",
+                     phone="01415721448",
+                     image_link="https://shorturl.at/vL789")
+            
+            gig = Gig(venue_id = 1,
+                   artist_id = 1,
+                   time = '21:00',
+                   hourly_rate = 5.5,
+                   duration = 4.5,
+                   is_booked = False)
 
-    def test_edit_gigs_fail(self):
+            db.session.add(gig)
+            db.session.add(newVenue)
+            db.session.add(newArtist)
+            db.session.commit()
+            response = client.get('/gigs/1/edit')
+            self.assertEqual(response.status_code, 200)
+            self.assertIn(b'4.5', response.data)
+            self.assertIn(b'submit', response.data)
+            self.assertIn(b'time', response.data)
+            self.assertIn(b'Edit gig', response.data)
+            self.assertIn(b'Edit gig', response.data)
+            
+    def test_edit_get_gigs_fail(self):
+        with self.client as client:
+            token = self.login_as_manager(client)
+            response = client.get('/gigs/1/edit', headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {token}'
+                })
+            self.assertEqual(response.status_code, 404)
+
+
+    def test_edit_post_gigs_success(self):
+        with self.client as client:
+            token = self.login_as_manager(client)
+            create_test_gig()
+            response = client.post('/gigs/1/edit', headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {token}'
+                })
+            self.assertEqual
+        
+
+    def test_edit_post_gigs_fail(self):
         pass
 
     def test_gigs_create_success(self):

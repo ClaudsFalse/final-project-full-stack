@@ -6,7 +6,7 @@ import requests
 import datetime
 from os import environ as env
 from dotenv import find_dotenv, load_dotenv
-
+from models import Artist, Gig, Venue
 ENV_FILE = find_dotenv()
 if ENV_FILE:
     load_dotenv(ENV_FILE)
@@ -45,6 +45,30 @@ testingUsers = {
     }
 
 # testing utils ----
+
+def create_test_gig(db):
+    newArtist = Artist(name = 'Jordan',
+                   email = 'artist@groove.com',
+                   phone = '07563489658',
+                   genres = ['disco', 'house'])
+    newVenue = Venue(name="Tabac", 
+                     genres=['disco', 'house'],
+                     address="Mitchell Lane",
+                     phone="01415721448",
+                     image_link="https://shorturl.at/vL789")
+            
+    gig = Gig(venue_id = 1,
+                   artist_id = 1,
+                   time = '21:00',
+                   hourly_rate = 5.5,
+                   duration = 4.5,
+                   is_booked = False)
+
+    db.session.add(gig)
+    db.session.add(newVenue)
+    db.session.add(newArtist)
+    db.session.commit()
+    
 def getUserAccessToken(userName):
     # client id and secret come from LogIn (Test Client)! which has password enabled under "Client > Advanced > Grant Types > Tick Password"
     url = f'https://{env.get("AUTH0_DOMAIN")}/oauth/token' 
