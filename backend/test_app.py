@@ -325,26 +325,88 @@ class GroovyTestCase(unittest.TestCase):
                 })
             self.assertEqual(response.status_code, 404)
 
-
     def test_edit_post_gigs_success(self):
         with self.client as client:
             token = self.login_as_manager(client)
-            create_test_gig()
+            create_test_gig(db)
+            data = {
+                'id': '1',
+                'place': 'Tabac',
+                'start_time': '22:00',
+                'hourly_rate':'7.8',
+                'duration':'6'
+                    }
             response = client.post('/gigs/1/edit', headers = {
                     'Content-Type': 'application/json',
                     'Authorization': f'Bearer {token}'
-                })
-            self.assertEqual
-        
-
+                },
+                json=data)
+            
+            self.assertEqual(response.status_code, 302)
+            # Assert that the gig was updated in the database
+            updated_gig = Gig.query.get(data["id"])
+            self.assertEqual(updated_gig.time, '22:00')
+            self.assertEqual(updated_gig.hourly_rate, 7.8)
+            self.assertEqual(updated_gig.duration, 6)
+            
     def test_edit_post_gigs_fail(self):
-        pass
+        with self.client as client:
+            token = self.login_as_manager(client)
+            create_test_gig(db)
+            data = {
+                'place': 'Tabac',
+                'start_time': '22:00',
+                'hourly_rate':'7.8',
+                'duration':'6'
+                    }
+            response = client.post('/gigs/2/edit', headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {token}'
+                },
+                json=data)
+            self.assertEqual(response.status_code, 404)
 
-    def test_gigs_create_success(self):
-        pass
 
-    def test_gigs_create_fail(self):
-        pass
+    def test_gigs_post_create_success(self):
+        with self.client as client:
+            token = self.login_as_manager(client)
+            create_test_gig(db)
+            data = {
+                'place': 'Tabac',
+                'start_time': '23:00',
+                'hourly_rate':'10.8',
+                'duration':'4'
+                    }
+            response = client.post('/gigs/create', headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {token}'
+                },
+                json=data)
+            self.assertEqual(response.status_code, 302)
+
+
+
+    def test_gigs_post_create_fail(self):
+        with self.client as client:
+            token = self.login_as_manager(client)
+            response = client.post('/gig/create', headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {token}'
+                })
+            self.assertEqual(response.status_code, 404)
+
+    def test_get_gigs_create_success(self):
+        with self.client as client:
+            token = self.login_as_manager(client)
+            response = client.get('/gigs/create', headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {token}'
+                })
+            
+            self.assertEqual(response.status_code, 200)
+            self.assertIn(b'Place:', response.data)
+            self.assertIn(b'Duration (hours):', response.data)
+
             
 # Make the tests conveniently executable
 if __name__ == "__main__":

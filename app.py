@@ -181,32 +181,30 @@ def create_app(test_config=None):
         return render_template('edit_gig.html', gig_data=gig_data)
 
     if request.method == 'POST':
-        gig = Gig.query.get(gig_id)
-        data = {
-            'place': request.form.get('place'),
-            'start_time': request.form.get('time'),
-            'hourly_rate': request.form.get('hourly-rate'),
-            'duration': request.form.get('duration')
-        }
-     
-        gig.start_time = data['start_time']
-        gig.hourly_rate = data['hourly_rate']
-        gig.duration = data['duration']
-        db.session.commit()
-        db.session.close()
-        flash("Gig updated successfully")
-        return redirect('/gigs')
+        data = request.json
+        try:
+           gig = Gig.query.get(gig_id)
+           if gig is None:
+              abort(404)
+
+           gig.time = data['start_time']
+           gig.hourly_rate = data['hourly_rate']
+           gig.duration = data['duration']
+           db.session.commit()
+           db.session.close()
+           flash("Gig updated successfully")
+           return redirect('/gigs')
+        
+        except ValueError as e:
+           print(e)
+           abort(500)
+  
 
 
   @app.route('/gigs/create', methods=['GET', 'POST'])
   def create_gigs():
     if request.method == 'POST':
-        data = {
-            'place': request.form.get('place'),
-            'start_time': request.form.get('time'),
-            'hourly_rate': request.form.get('hourly-rate'),
-            'duration': request.form.get('duration')
-        }
+        data = request.json
 
         # get the venue id
         try:
@@ -216,9 +214,9 @@ def create_app(test_config=None):
             newGig = Gig(
                 venue_id=venue_query.id,
                 artist_id=None,
-                time=request.form.get('time'),
-                hourly_rate=request.form.get('hourly-rate'),
-                duration=request.form.get('duration'),
+                time=data['start_time'],
+                hourly_rate=data['hourly_rate'],
+                duration=data['duration'],
                 is_booked=False
             )
 
