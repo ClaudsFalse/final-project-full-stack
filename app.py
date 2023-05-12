@@ -46,7 +46,6 @@ def create_app(test_config=None):
   # Controllers API
   @app.route("/")
   def home():
-    print("No active user session detected. Please login")
     if not session:
         return render_template(
             "index.html")
@@ -93,6 +92,9 @@ def create_app(test_config=None):
 
   @app.route('/venues')
   def get_venues():
+    if 'user' not in session:
+       return redirect('/login')
+    
     token = session['user']['access_token']
     try:
         venue_query = Venue.query.all()
@@ -104,6 +106,8 @@ def create_app(test_config=None):
 
   @app.route('/artists')
   def get_artists():
+    if 'user' not in session:
+       return redirect('/login')
     try:
         artist_query = Artist.query.all()
         artists = [artist for artist in artist_query]
@@ -114,7 +118,9 @@ def create_app(test_config=None):
 
   @app.route('/gigs')
   def get_gigs():
-    if session:
+    if 'user' not in session:
+       return redirect('/login')
+    else:
         token = session['user']['access_token']
     try:
         gig_query = Gig.query.all()
@@ -182,7 +188,7 @@ def create_app(test_config=None):
             'hourly_rate': request.form.get('hourly-rate'),
             'duration': request.form.get('duration')
         }
-        print("*** THIS IS DATA, ", data)
+     
         gig.start_time = data['start_time']
         gig.hourly_rate = data['hourly_rate']
         gig.duration = data['duration']
