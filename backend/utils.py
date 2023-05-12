@@ -3,7 +3,6 @@ from jose import jwt
 import jwt
 import json
 import requests
-import datetime
 from os import environ as env
 from dotenv import find_dotenv, load_dotenv
 from backend.models import Artist, Gig, Venue
@@ -11,16 +10,6 @@ ENV_FILE = find_dotenv()
 if ENV_FILE:
     load_dotenv(ENV_FILE)
 
-def memoize(function):
-  memo = {}
-  def wrapper(*args):
-    if args in memo:
-      return memo[args]
-    else:
-      rv = function(*args)
-      memo[args] = rv
-      return rv
-  return wrapper
 
 def is_manager(token):
     decoded = verify_decode_jwt(token)
@@ -84,9 +73,3 @@ def getUserAccessToken(userName):
     responseDICT = json.loads(requests.post(url, json=parameter, headers=headers).text)
     return responseDICT['access_token']
 
-# memoize code from: https://stackoverflow.com/a/815160
-# to avoid getting multiplce calls over many tests 
-@memoize
-def getUserTokenHeaders(userName):
-    return { 'authorization': "Bearer " + getUserToken(userName)} 
-  

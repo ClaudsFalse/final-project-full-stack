@@ -1,6 +1,6 @@
 from os import environ as env
 from dotenv import find_dotenv, load_dotenv
-from sqlalchemy import Column, String, create_engine
+from sqlalchemy import Column
 from flask_sqlalchemy import SQLAlchemy
 
 ENV_FILE = find_dotenv()

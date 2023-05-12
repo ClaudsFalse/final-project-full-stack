@@ -1,7 +1,4 @@
-"""Python Flask WebApp Auth0 integration example
-"""
-import os
-import json
+
 from os import environ as env
 from urllib.parse import quote_plus, urlencode
 from backend.models import Artist, Venue, Gig, setup_db, db_drop_and_create_all, db
@@ -11,9 +8,7 @@ from flask import Flask, redirect, render_template, session, url_for, abort, jso
 from backend.auth.auth import AuthError, requires_auth, verify_decode_jwt
 from backend.utils import is_manager, is_token_expired
 from flask_migrate import Migrate
-import sys
 
-sys.path.append('app.py')
 ENV_FILE = find_dotenv()
 if ENV_FILE:
     load_dotenv(ENV_FILE)
