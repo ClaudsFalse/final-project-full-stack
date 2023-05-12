@@ -11,7 +11,7 @@ from dotenv import find_dotenv, load_dotenv
 from flask import session, template_rendered, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 
-from app import create_app
+from backend.app import create_app
 from backend.models import Artist, Venue, Gig, db, db_drop_and_create_all, setup_db
 from backend.utils import is_manager, is_token_expired, getUserAccessToken, create_test_gig
 
