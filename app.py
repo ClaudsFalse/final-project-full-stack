@@ -13,7 +13,7 @@ from backend.utils import is_manager, is_token_expired
 from flask_migrate import Migrate
 import sys
 
-
+sys.path.append('app.py')
 ENV_FILE = find_dotenv()
 if ENV_FILE:
     load_dotenv(ENV_FILE)
