@@ -230,5 +230,5 @@ def create_app(test_config=None):
 
 
 if __name__ == "__main__":
-    application = create_app()
-    application.run(debug=True)
+    app = create_app()
+    app.run(debug=True)
