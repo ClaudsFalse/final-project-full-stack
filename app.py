@@ -8,6 +8,10 @@ from flask import Flask, redirect, render_template, session, url_for, abort, jso
 from backend.auth.auth import AuthError, requires_auth, verify_decode_jwt
 from backend.utils import is_manager, is_token_expired
 from flask_migrate import Migrate
+import sys
+
+# Redirect print statements to standard output
+sys.stdout = sys.stderr
 
 ENV_FILE = find_dotenv()
 if ENV_FILE:
