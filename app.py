@@ -58,9 +58,8 @@ def create_app(test_config=None):
   def login():
     print(url_for('callback'))
     return oauth.auth0.authorize_redirect(
-        redirect_uri=url_for("callback", _external=True),
+        redirect_uri="https://final-project-qnms.onrender.com/callback",
         audience=env.get('API_AUDIENCE')
-        
     )
 
 
