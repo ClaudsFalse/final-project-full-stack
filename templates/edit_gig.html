@@ -33,6 +33,7 @@
       {% endblock %}
     <script>
         function editGig() {
+            console.log('editGig function called');
             const gigId = "{{gig_data['id']}}"
             const place = document.getElementById('place').value;
             const startTime = document.getElementById('start-time').value;
@@ -62,6 +63,7 @@
                 });
             }
             document.getElementById('edit-gig-form').addEventListener('submit', function(event) {
+                console.log('edit-gig-form submitted');
                 event.preventDefault();
                 editGig();
             });
