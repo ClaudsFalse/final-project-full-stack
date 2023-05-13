@@ -41,6 +41,12 @@ class GroovyTestCase(unittest.TestCase):
         client.get('/login')
         token = getUserAccessToken('venue-manager@groove.com')
         return token
+    
+    def login_as_artist(self, client):
+        client.get('/login')
+        token = getUserAccessToken('artist@groove.com')
+        return token
+        
 
     def tearDown(self):
         """Executed after reach test"""
@@ -280,7 +286,7 @@ class GroovyTestCase(unittest.TestCase):
                 data='{"id": "1"}')
             self.assertEqual(response.status_code, 404)
 
-    def test_edit_get_gigs_success(self):
+    def test_edit_get_gigs_success_manager(self):
         with self.client as client:
             token = self.login_as_manager(client)
             # test that we've successfully logged in as a manager
@@ -316,7 +322,7 @@ class GroovyTestCase(unittest.TestCase):
             self.assertIn(b'Edit gig', response.data)
             self.assertIn(b'Edit gig', response.data)
             
-    def test_edit_get_gigs_fail(self):
+    def test_edit_get_gigs_fail_manager(self):
         with self.client as client:
             token = self.login_as_manager(client)
             response = client.get('/gigs/1/edit', headers = {
@@ -325,7 +331,7 @@ class GroovyTestCase(unittest.TestCase):
                 })
             self.assertEqual(response.status_code, 404)
 
-    def test_edit_post_gigs_success(self):
+    def test_edit_post_gigs_success_manager(self):
         with self.client as client:
             token = self.login_as_manager(client)
             create_test_gig(db)
@@ -350,7 +356,7 @@ class GroovyTestCase(unittest.TestCase):
             self.assertEqual(updated_gig.hourly_rate, 7.8)
             self.assertEqual(updated_gig.duration, 6)
             
-    def test_edit_post_gigs_fail(self):
+    def test_edit_post_gigs_fail_manager(self):
         with self.client as client:
             token = self.login_as_manager(client)
             create_test_gig(db)
@@ -368,7 +374,7 @@ class GroovyTestCase(unittest.TestCase):
             self.assertEqual(response.status_code, 404)
 
 
-    def test_gigs_post_create_success(self):
+    def test_gigs_post_create_success_manager(self):
         with self.client as client:
             token = self.login_as_manager(client)
             create_test_gig(db)
@@ -388,7 +394,7 @@ class GroovyTestCase(unittest.TestCase):
 
 
 
-    def test_gigs_post_create_fail(self):
+    def test_gigs_post_create_fail_manager(self):
         with self.client as client:
             token = self.login_as_manager(client)
             response = client.post('/gig/create', headers = {
@@ -397,7 +403,7 @@ class GroovyTestCase(unittest.TestCase):
                 })
             self.assertEqual(response.status_code, 404)
 
-    def test_get_gigs_create_success(self):
+    def test_get_gigs_create_success_manager(self):
         with self.client as client:
             token = self.login_as_manager(client)
             response = client.get('/gigs/create', headers = {
@@ -408,8 +414,72 @@ class GroovyTestCase(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertIn(b'Place:', response.data)
             self.assertIn(b'Duration (hours):', response.data)
-
+    
+    def test_post_gigs_delete_success_artist(self):
+        with self.client as client:
+            token = self.login_as_artist(client)
+            newArtist = Artist(name = 'Jordan',
+                   email = 'artist@groove.com',
+                   phone = '07563489658',
+                   genres = ['disco', 'house'])
+            newVenue = Venue(name="Tabac", 
+                     genres=['disco', 'house'],
+                     address="Mitchell Lane",
+                     phone="01415721448",
+                     image_link="https://shorturl.at/vL789")
             
+            gig = Gig(venue_id = 1,
+                   artist_id = 1,
+                   time = '21:00',
+                   hourly_rate = 5.5,
+                   duration = 4.5,
+                   is_booked = False)
+
+            db.session.add(gig)
+            db.session.add(newVenue)
+            db.session.add(newArtist)
+            db.session.commit()
+            response = client.post('/gigs/delete', headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {token}'
+                },
+                data='{"id": "1"}')
+            self.assertEqual(response.status_code, 500)
+
+    def test_get_gigs_when_logged_in_as_artist_success(self):
+        with self.client as client:
+            token = self.login_as_artist(client)
+            # test that we've successfully logged in as a artist
+            self.assertEqual(is_manager(token), False)
+            with client.session_transaction() as session:
+                session['user'] = {'access_token': token}
+            newArtist = Artist(name = 'Jordan',
+                   email = 'artist@groove.com',
+                   phone = '07563489658',
+                   genres = ['disco', 'house'])
+            newVenue = Venue(name="Tabac", 
+                     genres=['disco', 'house'],
+                     address="Mitchell Lane",
+                     phone="01415721448",
+                     image_link="https://shorturl.at/vL789")
+            
+            gig = Gig(venue_id = 1,
+                   artist_id = 1,
+                   time = '21:00',
+                   hourly_rate = 5.5,
+                   duration = 4.5,
+                   is_booked = False)
+
+            db.session.add(gig)
+            db.session.add(newVenue)
+            db.session.add(newArtist)
+            db.session.commit()
+            response = client.get('/gigs')
+            self.assertEqual(response.status_code, 200)
+            self.assertIn(b'4.5', response.data)
+
+
+         
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()

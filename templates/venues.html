@@ -22,9 +22,11 @@
             <div class="card-content">
                 <h2 style="font-family: 'Bruno Ace', cursive;" class="card-title">{{ venue.name }}</h2>
                 <p class="card-description">{{venue.address}}</p>
-                <button class="card-button" disabled>View available gigs</button>
+                <button class="card-button" disabled style="opacity: 0.5;
+                cursor: not-allowed;">View available gigs</button>
                 {%if is_manager%}
-                <button class="card-button">Delete Venue</button>
+                <button class="card-button" style="opacity: 0.5;
+                cursor: not-allowed;">Delete Venue</button>
                 {%endif%}
 
               </div>

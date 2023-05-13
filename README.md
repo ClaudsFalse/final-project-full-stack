@@ -37,8 +37,12 @@ Roles will include at least:
 Tests will include at least:
 - One test for success behavior of each endpoint ✅
 - One test for error behavior of each endpoint ✅
-- At least two tests of RBAC for each role:
-        - 
+- At least two tests of RBAC for each role: ✅
+        - For Venue Manager: 1. test_gigs_post_create_success
+                             2. test_edit_post_gigs_success
+        - For Artist: 1. test_post_gigs_delete_success_artist
+                      2. test_get_gigs_when_logged_in_as_artist_success
+
 
 # Project Rubric
 Your project should meet all rubric requirements to pass the project. The link is provided here: [Project Rubric.](https://review.udacity.com/#!/rubrics/5091/view)
