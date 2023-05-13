@@ -177,7 +177,7 @@ def create_app(test_config=None):
 
     if request.method == 'POST':
         print("request is post")
-        print("request: ", request.form)
+        print("request: ", request.form.get('time'))
         data = None
         try:
            gig = Gig.query.get(gig_id)
