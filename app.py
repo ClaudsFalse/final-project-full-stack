@@ -202,7 +202,7 @@ def create_app(test_config=None):
   def create_gigs():
     if request.method == 'POST':
         data = request.json
-
+        print("data sent via form: ", data)
         # get the venue id
         try:
             venue_query = Venue.query.filter(
@@ -220,10 +220,14 @@ def create_app(test_config=None):
             db.session.add(newGig)
             db.session.commit()
             db.session.close()
+            return jsonify({
+              'success': True,
+    })
 
         except ValueError as e:
             print(e)
-        return redirect('/gigs')
+        
+
     else:
         return render_template('new_gig.html')
   return app

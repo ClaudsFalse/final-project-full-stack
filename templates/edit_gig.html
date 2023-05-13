@@ -35,13 +35,12 @@
 
       <script>
         function editGig() {
-    console.log('editGig function called');
-    const gigId = "{{gig_data['id']}}"
-    const place = document.getElementById('place').value;
-    const startTime = document.getElementById('start-time').value;
-    const hourlyRate = document.getElementById('hourly-rate').value;
-    const duration = document.getElementById('duration').value;
-    const data = {
+            const gigId = "{{gig_data['id']}}"
+            const place = document.getElementById('place').value;
+            const startTime = document.getElementById('start-time').value;
+            const hourlyRate = document.getElementById('hourly-rate').value;
+            const duration = document.getElementById('duration').value;
+            const data = {
                 id:gigId,
                 place: place,
                 start_time: startTime,
@@ -69,10 +68,7 @@
                     console.error('Error:', error);
                 });
             }
-           
-        
     document.getElementById('edit-gig-form').addEventListener('submit', function(event) {
-                console.log('edit-gig-form submitted');
                 event.preventDefault();
                 editGig();
             });
