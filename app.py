@@ -156,7 +156,6 @@ def create_app(test_config=None):
 
   @app.route('/gigs/<int:gig_id>/edit', methods=['GET', 'POST'])
   def edit_gig(gig_id):
-
     if request.method == 'GET':
         gig = Gig.query.get_or_404(gig_id)
         venue = Venue.query.get_or_404(gig.venue_id)
@@ -171,13 +170,11 @@ def create_app(test_config=None):
 
     if request.method == 'POST':
         data = request.json
-        print("data sent via js: ", data)
-        print("gig id sent: ", gig_id)
         try:
            gig = Gig.query.get(gig_id)
            if gig is None:
               abort(404)
-
+           print("DATA", data)
            gig.time = data['start_time']
            gig.hourly_rate = data['hourly_rate']
            gig.duration = data['duration']
