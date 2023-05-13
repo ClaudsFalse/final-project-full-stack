@@ -56,7 +56,7 @@ def create_app(test_config=None):
 
   @app.route("/login")
   def login():
-    print(env.get('API_AUDIENCE'))
+    print("AUDIENCE", env.get('API_AUDIENCE'))
     return oauth.auth0.authorize_redirect(
         redirect_uri="https://final-project-qnms.onrender.com/callback",
         audience=env.get('API_AUDIENCE')
@@ -72,7 +72,7 @@ def create_app(test_config=None):
         + "/v2/logout?"
         + urlencode(
             {
-                "returnTo": url_for("home", _external=True),
+                "returnTo": 'https://final-project-qnms.onrender.com',
                 "client_id": env.get("AUTH0_CLIENT_ID"),
             },
             quote_via=quote_plus,
