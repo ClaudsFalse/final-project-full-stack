@@ -182,7 +182,7 @@ def create_app(test_config=None):
            if gig is None:
               abort(404)
 
-           gig.time = data['time']
+           gig.time = data['start_time']
            gig.hourly_rate = data['hourly_rate']
            gig.duration = data['duration']
            db.session.commit()
