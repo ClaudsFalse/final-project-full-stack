@@ -37,7 +37,8 @@ Roles will include at least:
 Tests will include at least:
 - One test for success behavior of each endpoint ✅
 - One test for error behavior of each endpoint ✅
-- At least two tests of RBAC for each role
+- At least two tests of RBAC for each role:
+        - 
 
 # Project Rubric
 Your project should meet all rubric requirements to pass the project. The link is provided here: [Project Rubric.](https://review.udacity.com/#!/rubrics/5091/view)
