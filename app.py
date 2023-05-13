@@ -41,7 +41,6 @@ def create_app(test_config=None):
   # Controllers API
   @app.route("/")
   def home():
-    print("homepage")
     if 'user' not in session:
         return render_template(
             "index.html")
@@ -61,7 +60,6 @@ def create_app(test_config=None):
 
   @app.route("/login")
   def login():
-    print("AUDIENCE", env.get('API_AUDIENCE'))
     return oauth.auth0.authorize_redirect(
         redirect_uri="https://final-project-qnms.onrender.com/callback",
         audience=env.get('API_AUDIENCE')
@@ -112,7 +110,6 @@ def create_app(test_config=None):
 
   @app.route('/gigs')
   def get_gigs():
-    print("gigs")
     if 'user' not in session:
        return redirect('/login')
     else:
@@ -177,7 +174,6 @@ def create_app(test_config=None):
     if request.method == 'POST':
         try:
            data = request.json
-           print("data received: ", data)
            gig = Gig.query.get(gig_id)
            if gig is None:
               abort(404)
@@ -202,7 +198,6 @@ def create_app(test_config=None):
   def create_gigs():
     if request.method == 'POST':
         data = request.json
-        print("data sent via form: ", data)
         # get the venue id
         try:
             venue_query = Venue.query.filter(

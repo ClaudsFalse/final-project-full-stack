@@ -12,16 +12,16 @@ Models will include at least:
 
 ## Endpoints
 Endpoints will include at least:
-- Two GET requests:
+- Two GET requests: ✅
     - GET artists 
     - GET venues
-    - GET gigs ✅
+    - GET gigs 
 - One POST request ✅
     - post gig ✅
 - One PATCH request ✅
-    - edit artist
+    - edit gig
 - One DELETE request ✅
-    - delete artist
+    - delete gig
 
 ## Roles
 Roles will include at least:
@@ -29,14 +29,14 @@ Roles will include at least:
     - artist
     - venue manager
 - Permissions specified for all endpoints ✅
-    - artist: crud on artist
-    - venue manager: crud on venues 
+    - artist
+    - venue manager
 
 
 ## Tests
 Tests will include at least:
-- One test for success behavior of each endpoint
-- One test for error behavior of each endpoint
+- One test for success behavior of each endpoint ✅
+- One test for error behavior of each endpoint ✅
 - At least two tests of RBAC for each role
 
 # Project Rubric

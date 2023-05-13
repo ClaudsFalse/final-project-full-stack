@@ -342,7 +342,8 @@ class GroovyTestCase(unittest.TestCase):
                 },
                 json=data)
             
-            self.assertEqual(response.status_code, 302)
+            self.assertEqual(response.status_code, 200)
+            self.assertIn(b'success', response.data)
             # Assert that the gig was updated in the database
             updated_gig = Gig.query.get(data["id"])
             self.assertEqual(updated_gig.time, '22:00')
@@ -382,7 +383,8 @@ class GroovyTestCase(unittest.TestCase):
                     'Authorization': f'Bearer {token}'
                 },
                 json=data)
-            self.assertEqual(response.status_code, 302)
+            self.assertEqual(response.status_code, 200)
+            self.assertIn(b'success', response.data)
 
 
 
