@@ -11,7 +11,7 @@
     {% extends "layout.html" %}
     {% block content %}
     
-    <form method="POST" id="edit-gig-form">
+    <form id="edit-gig-form">
         <label for="place">Place:</label>
         <input type="text" id="place" name="place" value="{{gig_data['place']}}" disabled>
         
@@ -31,6 +31,7 @@
       </form>
       
       {% endblock %}
+
     <script>
         function editGig() {
             console.log('editGig function called');
@@ -68,6 +69,6 @@
                 editGig();
             });
         
-            </script>
+    </script>
 
 </body>
