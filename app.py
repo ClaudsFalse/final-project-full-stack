@@ -178,7 +178,7 @@ def create_app(test_config=None):
     if request.method == 'POST':
         print("request is post")
         data = request.data()
-        print("DATA", data)
+        print("request: ", request.form)
         try:
            gig = Gig.query.get(gig_id)
            if gig is None:
