@@ -157,6 +157,7 @@ def create_app(test_config=None):
   @app.route('/gigs/<int:gig_id>/edit', methods=['GET', 'POST'])
   def edit_gig(gig_id):
     if request.method == 'GET':
+        print("request is get")
         gig = Gig.query.get_or_404(gig_id)
         venue = Venue.query.get_or_404(gig.venue_id)
         gig_data = {
@@ -169,6 +170,7 @@ def create_app(test_config=None):
         return render_template('edit_gig.html', gig_data=gig_data)
 
     if request.method == 'POST':
+        print("request is post")
         data = request.json
         try:
            gig = Gig.query.get(gig_id)
