@@ -37,6 +37,7 @@ def create_app(test_config=None):
   # Controllers API
   @app.route("/")
   def home():
+    print("homepage")
     if 'user' not in session:
         return render_template(
             "index.html")
@@ -107,6 +108,7 @@ def create_app(test_config=None):
 
   @app.route('/gigs')
   def get_gigs():
+    print("gigs")
     if 'user' not in session:
        return redirect('/login')
     else:
