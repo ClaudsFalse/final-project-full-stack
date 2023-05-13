@@ -171,6 +171,8 @@ def create_app(test_config=None):
 
     if request.method == 'POST':
         data = request.json
+        print("data sent via js: ", data)
+        print("gig id sent: ", gig_id)
         try:
            gig = Gig.query.get(gig_id)
            if gig is None:
