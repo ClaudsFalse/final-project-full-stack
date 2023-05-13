@@ -39,7 +39,7 @@ def create_app(test_config=None):
   def home():
     if 'user' not in session:
         return render_template(
-            "index.html")
+            "templates/index.html")
     else:
         token = session['user']['access_token']
         if is_token_expired(token):
