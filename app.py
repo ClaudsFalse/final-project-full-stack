@@ -176,9 +176,12 @@ def create_app(test_config=None):
 
     if request.method == 'POST':
         try:
+           data = request.json
+           print("data received: ", data)
            gig = Gig.query.get(gig_id)
            if gig is None:
               abort(404)
+
            gig.time = request.form.get('time')
            gig.hourly_rate = data['hourly_rate']
            gig.duration = data['duration']
