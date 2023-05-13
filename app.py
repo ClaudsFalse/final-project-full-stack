@@ -188,7 +188,9 @@ def create_app(test_config=None):
            db.session.commit()
            db.session.close()
            flash("Gig updated successfully")
-           return redirect('/gigs')
+           return jsonify({
+              'success': True,
+    })
         
         except ValueError as e:
            print(e)
