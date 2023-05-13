@@ -41,11 +41,7 @@
                     console.error('Error:', error);
                 });
             }
-            document.getElementById('edit-gig-form').addEventListener('submit', function(event) {
-                console.log('edit-gig-form submitted');
-                event.preventDefault();
-                editGig();
-            });
+           
         
     </script>
     <form id="edit-gig-form">
@@ -69,6 +65,12 @@
       
       {% endblock %}
 
-    
+    <script>
+         document.getElementById('edit-gig-form').addEventListener('submit', function(event) {
+                console.log('edit-gig-form submitted');
+                event.preventDefault();
+                editGig();
+            });
+    </script>
 
 </body>
