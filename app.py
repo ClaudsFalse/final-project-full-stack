@@ -56,7 +56,7 @@ def create_app(test_config=None):
 
   @app.route("/login")
   def login():
-    print(url_for('callback'))
+    print(env.get('API_AUDIENCE'))
     return oauth.auth0.authorize_redirect(
         redirect_uri="https://final-project-qnms.onrender.com/callback",
         audience=env.get('API_AUDIENCE')
